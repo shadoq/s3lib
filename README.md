@@ -28,6 +28,7 @@ formGui.add("speedY1", "speedY1", 1f, -80, 240, 0.1f, localChangeListener);
 mobi.shad.s3lib.main - main class and method
 mobi.shad.s3lib.utils - utils method
 
+mobi.shad.s3libTest - Tests and examples application
 
 s3lib-desktop
 -----
@@ -50,6 +51,3 @@ https://www.youtube.com/watch?v=HPCsSh6gw4I&list=UUe8CMm1BrMmzhrqnFxYhcOg
 ***s3 Old Media Maker - tutorial create gallery***
 
 https://www.youtube.com/watch?v=y37ZXxs_x5E&index=11&list=UUe8CMm1BrMmzhrqnFxYhcOg
-
-
-
