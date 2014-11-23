@@ -1,0 +1,133 @@
+/*******************************************************************************
+ * Copyright 2013
+ *
+ * Jaroslaw Czub
+ * http://shad.mobi
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ******************************************************************************/
+package mobi.shad.s3lib.gfx.g3d.simpleobject;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import mobi.shad.s3lib.main.S3Log;
+import mobi.shad.s3lib.main.S3Mesh;
+
+import java.util.ArrayList;
+
+/**
+ * @author Jarek
+ */
+public class VertexSphere extends Object3d{
+
+	/**
+	 * @return
+	 */
+	public static S3Mesh sphere(){
+		return sphere(3f, 3f, 3f);
+	}
+
+	/**
+	 * @param radius
+	 * @return
+	 */
+	public static S3Mesh sphere(float radius){
+		return sphere(radius, radius, radius, 20, 20);
+	}
+
+	/**
+	 * @param radiusX
+	 * @param radiusY
+	 * @param radiusZ
+	 * @return
+	 */
+	public static S3Mesh sphere(float radiusX, float radiusY, float radiusZ){
+		return sphere(radiusX, radiusY, radiusZ, 20, 20);
+	}
+
+	/**
+	 * @param radiusX
+	 * @param radiusY
+	 * @param radiusZ
+	 * @param segmentsWidth
+	 * @param segmentsHeight
+	 * @return
+	 */
+	public static S3Mesh sphere(float radiusX, float radiusY, float radiusZ, float segmentsWidth, float segmentsHeight){
+
+		init();
+
+		float segmentsX = (float) Math.max(3, Math.floor(segmentsWidth));
+		float segmentsY = (float) Math.max(3, Math.floor(segmentsHeight));
+
+		S3Log.log("Model3DPrimitive::sphere",
+				  "radiusX=" + radiusX + "radiusX=" + radiusY + "radiusX=" + radiusZ + " segmentsWidth=" + segmentsX + " segmentsHeight=" + segmentsY);
+
+		float phiStart = 0;
+		float phiLength = (float) (Math.PI * 2);
+
+		float thetaStart = 0;
+		float thetaLength = (float) Math.PI;
+
+		int x, y;
+
+		ArrayList<Vector3> vertices = new ArrayList<Vector3>();
+		ArrayList<Vector2> uvs = new ArrayList<Vector2>();
+
+		for (y = 0; y <= segmentsY; y++){
+
+			for (x = 0; x <= segmentsX; x++){
+
+				float u = x / segmentsX;
+				float v = y / segmentsY;
+
+				float xp = (float) (-radiusX * Math.cos(phiStart + u * phiLength) * Math.sin(thetaStart + v * thetaLength));
+				float yp = (float) (radiusY * Math.cos(thetaStart + v * thetaLength));
+				float zp = (float) (radiusZ * Math.sin(phiStart + u * phiLength) * Math.sin(thetaStart + v * thetaLength));
+
+				vertices.add(new Vector3(xp, yp, zp));
+				uvs.add(new Vector2(u, v));
+			}
+		}
+
+		Vector3 vt1 = new Vector3();
+		Vector3 vt2 = new Vector3();
+		Vector3 vt3 = new Vector3();
+		Vector3 vt4 = new Vector3();
+		Vector2 uv1 = new Vector2();
+		Vector2 uv2 = new Vector2();
+		Vector2 uv3 = new Vector2();
+		Vector2 uv4 = new Vector2();
+
+		for (y = 0; y <= segmentsY; y++){
+
+			for (x = 0; x < segmentsX; x++){
+				try {
+					vt1 = vertices.get((int) (y * segmentsX + x + 0));
+					vt2 = vertices.get((int) (y * segmentsX + x + 1));
+					vt3 = vertices.get((int) ((y + 1) * segmentsX + x + 1));
+					vt4 = vertices.get((int) ((y + 1) * segmentsX + x + 0));
+
+					uv1 = uvs.get((int) (y * segmentsX + x + 0));
+					uv2 = uvs.get((int) (y * segmentsX + x + 1));
+					uv3 = uvs.get((int) ((y + 1) * segmentsX + x + 1));
+					uv4 = uvs.get((int) ((y + 1) * segmentsX + x + 0));
+
+					addTrilangeAutoNormal(vt1, vt2, vt3, uv1, uv2, uv3);
+					addTrilangeAutoNormal(vt1, vt3, vt4, uv1, uv3, uv4);
+				} catch (Exception ex){
+					ex.printStackTrace();
+				}
+			}
+		}
+
+		return dataToMesh();
+	}
+}

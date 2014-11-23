@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: mobi.shad.s3lib.editor.s3Editor
+
