@@ -1,0 +1,58 @@
+<shader>
+	<name>Distort Rainbow</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+
+		float speed = time * mainIterations / 100.0;
+		
+		vec2 center1 = vec2(sin(speed), cos(speed)) * mainSpeedX;
+		vec2 center2 = vec2(cos(speed / mainLight), sin(speed / mainLight)) * mainSpeedY;
+		vec2 center3 = vec2(sin(speed / mainPower), cos(speed / mainPower)) * mainSpeedZ;
+		
+		vec2 nxColor = vec2(0.0);
+		
+		float d = distance(position, center1) * mainAmplitudeX;
+		nxColor += vec2(cos(d),sin(d));
+		
+		d = distance(position, center2) * mainAmplitudeY;
+		nxColor += vec2(cos(d),sin(d));
+		
+		d = distance(position, center3) * mainAmplitudeZ;
+		nxColor += vec2(sin(d),cos(d));
+		
+		vec2 ncolor = normalize(nxColor);
+		
+		color += vec3(
+						ncolor.x,
+						ncolor.y,
+						(ncolor.x - (ncolor.y * mainStepX)) 
+					* sqrt(color.x * color.x + color.y * color.y * mainStepY * 10.0) * mainStepZ
+					);
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		)	
+	]]>
+	</fragment_frag>
+</shader>

@@ -1,0 +1,51 @@
+<shader>
+	<name>Post Blur</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec4 color = vec4(colourStart.x,colourStart.y,colourStart.z,1.0);
+
+		float mainIterationsInt = 2.0 + mainIterations * 0.1;
+		float mainLightInt = mainLight * 0.20;
+		float mainPowerInt = mainPower * 0.05;
+		
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+	for (float i = 0.; i < mainIterationsInt; i+=1.)
+	{
+		color += texture2D(u_diffuseTexture, v_texCoords0 + vec2( 0.0, mainPowerInt * i )) * mainLightInt * i;
+		color += texture2D(u_diffuseTexture, v_texCoords0 + vec2( 0.0, -mainPowerInt * i )) * mainLightInt * i;
+		color += texture2D(u_diffuseTexture, v_texCoords0 + vec2( mainPowerInt * i, 0.0 )) * mainLightInt * i;
+		color += texture2D(u_diffuseTexture, v_texCoords0 + vec2( -mainPowerInt * i, 0.0 )) * mainLightInt * i;
+		
+		color += texture2D(u_diffuseTexture, v_texCoords0 + vec2( mainPowerInt * i, -mainPowerInt * i )) * mainLightInt * i;
+		color += texture2D(u_diffuseTexture, v_texCoords0 + vec2( mainPowerInt * i, mainPowerInt * i )) * mainLightInt * i;
+		color += texture2D(u_diffuseTexture, v_texCoords0 + vec2( -mainPowerInt * i, mainPowerInt * i )) * mainLightInt * i;
+		color += texture2D(u_diffuseTexture, v_texCoords0 + vec2( -mainPowerInt * i, -mainPowerInt * i )) * mainLightInt * i;
+	}
+	
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		(vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) / mainSpeedX)	
+	]]>
+	</fragment_frag>
+</shader>

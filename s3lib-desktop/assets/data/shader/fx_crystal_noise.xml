@@ -1,0 +1,98 @@
+<shader>
+	<name>Empty</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+	
+		// v_tex0
+		// u_sampler0
+		
+		// position
+	
+		// time
+		// resolution
+
+		// colourStart
+		// colourProcess
+		// amplitudeColourR
+		// amplitudeColourG
+		// amplitudeColourB
+
+		// speedFlashR
+		// speedFlashG
+		// speedFlashB
+
+		// amplitudeFlashR
+		// amplitudeFlashG
+		// amplitudeFlashB
+
+		// mainSpeedX
+		// mainSpeedY
+		// mainSpeedZ
+
+		// mainAmplitudeX
+		// mainAmplitudeY
+		// mainAmplitudeZ
+
+		// mainStepX
+		// mainStepY
+		// mainStepZ
+
+		// mainIterations
+		// mainPower
+		// mainLight
+
+		uniform sampler2D backbuffer;
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		const float pi = 3.141592;
+		float angle = 0.0;
+		float radius = 0.0;
+		float fade = 0.0;
+		float gradient = 0.0;
+		float dist_from_center = length(position);
+		float angle_from_center = atan(position.y, position.x);		
+	 
+		float u=0.0;
+		float v=0.0;
+		float z=0.0;
+		
+		//
+		// Crystal Noise
+		//
+		gradient = 1.0;
+		for (float i=0.0; i<=mainIterations; i++)
+		{
+			vec2 blob_coord = vec2(sin(mainSpeedX * i + time * mainPower) * mainStepX, cos(mainSpeedY * i + time * mainLight) * mainStepY);
+			gradient = min(gradient, length(position - blob_coord));
+		}
+		gradient = pow(sin(gradient), mainAmplitudeX) * mainAmplitudeY * 2;
+		color = vec3(gradient);		
+
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+	
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) 
+	]]>
+	</fragment_frag>
+</shader>

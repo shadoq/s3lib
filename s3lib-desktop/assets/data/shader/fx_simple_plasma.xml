@@ -1,0 +1,94 @@
+<shader>
+	<name>Empty</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+	
+		// v_tex0
+		// u_sampler0
+		
+		// position
+	
+		// time
+		// resolution
+
+		// colourStart
+		// colourProcess
+		// amplitudeColourR
+		// amplitudeColourG
+		// amplitudeColourB
+
+		// speedFlashR
+		// speedFlashG
+		// speedFlashB
+
+		// amplitudeFlashR
+		// amplitudeFlashG
+		// amplitudeFlashB
+
+		// mainSpeedX
+		// mainSpeedY
+		// mainSpeedZ
+
+		// mainAmplitudeX
+		// mainAmplitudeY
+		// mainAmplitudeZ
+
+		// mainStepX
+		// mainStepY
+		// mainStepZ
+
+		// mainIterations
+		// mainPower
+		// mainLight
+
+		uniform sampler2D backbuffer;
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		const float pi = 3.141592;
+		float angle = 0.0;
+		float radius = 0.0;
+		float fade = 0.0;
+		float gradient = 0.0;
+		vec2 coord = position;	
+		vec2 centered_coord = coord - vec2(0.5);
+		float dist_from_center = length(centered_coord);
+		float angle_from_center = atan(centered_coord.y, centered_coord.x);		
+	 
+		float u,v;
+		float z;
+ 
+		//
+		// Simple Plasma
+		//
+		color.r = sin(coord.x * mainSpeedX*mainIterations) + sin(coord.y * mainAmplitudeX * mainIterations) + sin(coord.x * 4.0 + sin(coord.y * 8.0 + time*mainStepX));
+		color.g = sin(coord.x * mainSpeedY*mainIterations) + sin(coord.y * mainAmplitudeY * mainIterations) + sin(coord.x * 8.0 + sin(coord.y * 16.0 + time*mainStepY));
+		color.b = sin(coord.x * mainSpeedZ*mainIterations) + sin(coord.y * mainAmplitudeZ * mainIterations) + sin(coord.x * 2.0 + sin(coord.y * 4.0 + time*mainStepZ));		
+
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+	
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) 
+	]]>
+	</fragment_frag>
+</shader>

@@ -1,0 +1,97 @@
+<shader>
+	<name>Empty</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+	
+		// v_tex0
+		// u_sampler0
+		
+		// position
+	
+		// time
+		// resolution
+
+		// colourStart
+		// colourProcess
+		// amplitudeColourR
+		// amplitudeColourG
+		// amplitudeColourB
+
+		// speedFlashR
+		// speedFlashG
+		// speedFlashB
+
+		// amplitudeFlashR
+		// amplitudeFlashG
+		// amplitudeFlashB
+
+		// mainSpeedX
+		// mainSpeedY
+		// mainSpeedZ
+
+		// mainAmplitudeX
+		// mainAmplitudeY
+		// mainAmplitudeZ
+
+		// mainStepX
+		// mainStepY
+		// mainStepZ
+
+		// mainIterations
+		// mainPower
+		// mainLight
+
+		uniform sampler2D backbuffer;
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		const float pi = 3.141592;
+		float angle = 0.0;
+		float radius = 0.0;
+		float fade = 0.0;
+		float gradient = 0.0;
+		float dist_from_center = length(position);
+		float angle_from_center = atan(position.y, position.x);		
+	 
+		float u=0.0;
+		float v=0.0;
+		float z=0.0;
+		
+		//
+		// Disco lamp
+		//
+		z = sqrt(mainLight - position.x * position.x - position.y * position.y);
+		vec2 tex = (position * mainIterations) / z;
+	 
+		fade = pow(z,2.0 * mainPower);
+		vec2 discolamp = vec2(pow(sin(tex.x + sin(mainSpeedX * time * 0.5) * 8.0 * mainAmplitudeX) + mainStepY, 2.0), pow(sin(tex.y + sin(mainSpeedY * time * 0.5) * 8.0 * mainAmplitudeY) + mainStepZ, 2.0));
+		gradient = (mainStepX - discolamp.x - discolamp.y) * fade;
+		color = vec3(gradient);		
+
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+	
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) 
+	]]>
+	</fragment_frag>
+</shader>

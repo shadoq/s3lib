@@ -1,0 +1,71 @@
+<shader>
+	<name>Tunnel</name>
+	<author>Shad - shad.net.pl</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		float raymarch(vec3 currentRay)
+		{
+			return cos(currentRay.x) + cos(currentRay.y) + cos(currentRay.z);
+		}
+
+		vec3 getNormal(vec3 currentRay)
+		{
+			vec3 f=vec3(0.01, 0,0);
+			return normalize(vec3(raymarch(currentRay+f.xyy),raymarch(currentRay+f.yxy),raymarch(currentRay+f.yyx)));
+		}
+		
+		vec3 color = colourStart;
+		
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+			position.x *= resolution.x / resolution.y;
+			float distance = 0.0;
+			vec3 origin = vec3(time * mainSpeedX * 0.1, time * mainSpeedY * 0.1, time * mainSpeedZ);
+			vec3 currentRay = origin;
+			vec3 direction = normalize(vec3(position.x, position.y, 1.0));
+			
+			for(float i = 0.0; i < mainIterations; i+=1.)
+			{
+				distance = raymarch(currentRay);
+				currentRay += distance * direction;
+			}
+
+			float rayLength = length(currentRay - origin);
+			
+			vec4 fog = vec4(
+				cos(time * 0.3) * rayLength * 0.03 + 0.05, 
+				cos(time * 0.2) * rayLength * 0.04 + 0.05, 
+				sin(time * 0.1) * rayLength * 0.04 + 0.05, 
+				1.02
+			);
+			vec4 nxColor=((1.-min(currentRay.y+2.0,1.)) * vec4(sin(time) * 0.3,cos(time) * .6, 0.9, 0.9)) * min(time * 0.5, 1.0);
+			nxColor += vec4(max(dot(getNormal(currentRay),vec3(.1,.1,.0)),.0));
+			nxColor += fog;
+			color += vec3(nxColor.x, nxColor.y, nxColor.z);
+	
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+	
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) 
+	]]>
+	</fragment_frag>
+</shader>

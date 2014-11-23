@@ -1,0 +1,24 @@
+#ifdef GL_ES
+	#define LOWP lowp
+	precision mediump float;
+#else
+	#define LOWP
+#endif
+varying LOWP vec4 v_color;
+varying vec2 v_texCoords;
+uniform sampler2D u_texture;
+uniform sampler2D u_texture1;
+
+uniform float blurThreshold;
+
+void main()
+{    
+	vec4 orgColour = texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y));
+	float brightness = 0.3 * orgColour.x + 0.59 * orgColour.y + 0.11 *orgColour.z;
+	
+	if (brightness > blurThreshold){   
+		gl_FragColor = orgColour;
+	} else {
+		gl_FragColor = vec4(0.0);
+	}
+}

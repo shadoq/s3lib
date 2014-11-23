@@ -1,0 +1,38 @@
+<shader>
+	<name>Power Ball</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		for (float i=0.0; i < mainIterations; i+=1.0) {
+			vec2 starPos = vec2(sin(i * mainStepX + time * mainSpeedX) * mainAmplitudeX, cos(i * mainStepY + time * mainSpeedY) * mainAmplitudeY );
+			color += pow(cos(distance(position, starPos)), mainLight * 50.0);
+		}
+		
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		(vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) / mainSpeedX)	
+	]]>
+	</fragment_frag>
+</shader>

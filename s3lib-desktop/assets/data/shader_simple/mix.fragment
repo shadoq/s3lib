@@ -1,0 +1,95 @@
+#ifdef GL_ES
+	#define LOWP lowp
+	precision mediump float;
+#else
+	#define LOWP
+#endif
+varying LOWP vec4 v_color;
+varying vec2 v_texCoords;
+uniform sampler2D u_texture0;
+uniform sampler2D u_texture1;
+uniform int blurSwitch;
+uniform int blendMode;
+uniform float blurOpacity;
+
+uniform vec2 resolution;
+uniform int vignetteSwitch;
+uniform float vignetteRadius;
+uniform float vignetteRadius2;
+
+uniform int sepiaSwitch;
+uniform float sepiaOpacity;
+uniform vec3  sepiaColor;
+
+uniform int levelSwitch;
+uniform float levelGamma;
+
+void main()
+{    
+   vec4 srcColour = texture2D(u_texture0, v_texCoords);
+   vec4 mixColour = texture2D(u_texture1, v_texCoords);
+   
+  if (blurSwitch==1){
+	  if ( blendMode == 0 ){
+
+		  gl_FragColor = min(srcColour + mixColour * blurOpacity, 1.0);
+
+	  } else if (blendMode == 1){
+
+		  gl_FragColor = clamp((srcColour + mixColour * blurOpacity) - (srcColour * mixColour * blurOpacity), 0.0, 1.0);
+		  gl_FragColor.w = 1.0;
+
+	  } else if ( blendMode == 2 ) {
+
+		  srcColour = (srcColour * 0.5) + 0.5;
+		  float colorX=0.0;
+		  float colorY=0.0;
+		  float colorZ=0.0;
+
+		  if (srcColour.x <= 0.5){
+			colorX=(mixColour.x - (1.0 - 2.0 * srcColour.x) * mixColour.x * (1.0 - mixColour.x));
+		  } else if ((srcColour.x > 0.5) && (mixColour.x <= 0.25)){
+			colorX=(mixColour.x + (2.0 * srcColour.x - 1.0) * (4.0 * mixColour.x * (4.0 * mixColour.x + 1.0) * (mixColour.x - 1.0) + 7.0 * mixColour.x));
+		  } else {
+			colorX=(mixColour.x + (2.0 * srcColour.x - 1.0) * (sqrt(mixColour.x) - mixColour.x));
+		  }
+		  if (srcColour.y <= 0.5){
+			colorY=(mixColour.y - (1.0 - 2.0 * srcColour.y) * mixColour.y * (1.0 - mixColour.y));
+		  } else if ((srcColour.y > 0.5) && (mixColour.y <= 0.25)){
+			colorY=(mixColour.y + (2.0 * srcColour.y - 1.0) * (4.0 * mixColour.y * (4.0 * mixColour.y + 1.0) * (mixColour.y - 1.0) + 7.0 * mixColour.y));
+		  } else {
+			colorY=(mixColour.y + (2.0 * srcColour.y - 1.0) * (sqrt(mixColour.y) - mixColour.y));
+		  }
+		  if (srcColour.z <= 0.5){
+			colorZ=(mixColour.z - (1.0 - 2.0 * srcColour.z) * mixColour.z * (1.0 - mixColour.z));
+		  } else if ((srcColour.z > 0.5) && (mixColour.z <= 0.25)){
+			colorZ=(mixColour.z + (2.0 * srcColour.z - 1.0) * (4.0 * mixColour.z * (4.0 * mixColour.z + 1.0) * (mixColour.z - 1.0) + 7.0 * mixColour.z));
+		  } else {
+			colorZ=(mixColour.z + (2.0 * srcColour.z - 1.0) * (sqrt(mixColour.z) - mixColour.z));
+		  }
+		  gl_FragColor = vec4(colorX, colorY, colorZ, 1.0);
+
+	  } else if (blendMode == 3){
+		  gl_FragColor = mixColour;
+	  } else {
+		  gl_FragColor = srcColour;
+	  }
+	} else {
+        gl_FragColor = srcColour;
+	}
+	if (sepiaSwitch==1){
+	  float gray = dot(gl_FragColor.rgb, vec3(0.299, 0.587, 0.114));
+	  gl_FragColor.rgb=mix(gl_FragColor.rgb, gray*sepiaColor, sepiaOpacity);
+	}
+	if (vignetteSwitch==1){
+	  vec2 position = (gl_FragCoord.xy / resolution.xy) - vec2(0.5);
+	  float len = 1.0-length(position);
+	  len = smoothstep(vignetteRadius, vignetteRadius2, len);
+	  gl_FragColor = vec4(gl_FragColor.r*len , gl_FragColor.g*len , gl_FragColor.b*len, 1.0);
+	}
+	if (levelSwitch==1){
+	  gl_FragColor.r = pow(gl_FragColor.r, levelGamma);
+	  gl_FragColor.g = pow(gl_FragColor.g, levelGamma);
+	  gl_FragColor.b = pow(gl_FragColor.b, levelGamma);
+	}
+}

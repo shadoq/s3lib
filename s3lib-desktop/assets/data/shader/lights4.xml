@@ -1,0 +1,52 @@
+<shader>
+	<name>Lights 4</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		vec2 move1, move2, move3, move4;
+		move1.x = cos(time * 0.5 * mainSpeedX) * mainPower;
+		move1.y = sin(time * 0.2 * mainSpeedX) * mainPower;
+		move2.x = cos(time * 0.3 * mainSpeedY) * mainPower;
+		move2.y = sin(time * 0.4 * mainSpeedY) * mainPower;
+		move3.x = sin(time * 0.7 * mainSpeedZ) * mainPower;
+		move3.y = cos(time * 0.9 * mainSpeedZ) * mainPower;
+		move4.x = sin(time * 0.8 * mainSpeedX) * mainPower;
+		move4.y = cos(time * 0.1 * mainSpeedX) * mainPower;
+		
+		float r1 =(dot(position + move1,position + move1)) * 3.0 * mainAmplitudeX;
+		float r2 =(dot(position + move2,position + move2)) * 3.0 * mainAmplitudeY;
+		float r3 =(dot(position + move3,position + move3)) * 3.0 * mainAmplitudeZ;
+		float r4 =(dot(position + move4,position + move4)) * 5.0 * mainAmplitudeX;
+		float metaball =(mainLight / r1 + mainLight / r2 + mainLight / r3 + mainLight / r4);
+  
+		color += vec3(pow(metaball,1.0 + move1.x), pow(metaball, 1.0), pow(metaball, 1.0)) - mix(vec3(0.2 + cos(time * mainStepX)/mainIterations, 0.2 + sin(time * mainStepY)/mainIterations, 0.2 + sin(time * mainStepZ)/mainIterations), vec3(mainPower), position.x);
+		
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+	
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) 
+	]]>
+	</fragment_frag>
+</shader>

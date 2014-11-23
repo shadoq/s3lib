@@ -1,0 +1,42 @@
+<shader>
+	<name>Power Ice 2</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		for(float i=1.0; i < mainIterations; i++){
+			float t = time * mainSpeedZ - i * mainStepZ;
+			vec2 point = vec2(sin(t* mainSpeedX)*0.5, sin(t * mainSpeedY)*0.5);
+			point += vec2(cos(t * mainStepY) * 0.5 * mainAmplitudeX, sin(t * mainStepY) * 0.5 * mainAmplitudeX);
+			point += vec2(sin(t * mainStepY) * mainAmplitudeY, cos(t * mainStepY) * mainAmplitudeY);
+			point /= 4. * sin(i);
+			color += (mainPower/((position.x-point.x)*(position.x-point.x) + (position.y-point.y)*(position.y-point.y))*mainLight)/i;
+		}
+		
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		(vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) / mainSpeedX)	
+	]]>
+	</fragment_frag>
+</shader>

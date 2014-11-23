@@ -1,0 +1,51 @@
+<shader>
+	<name>Blur Circle</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		vec2 cp = vec2(sin(time * mainSpeedX) * mainAmplitudeX, cos(time * mainSpeedZ)) * mainAmplitudeX;	  	  
+		vec2 cp2 = vec2(cos(time * mainSpeedY) * mainAmplitudeY, sin(time * mainSpeedZ)) * mainAmplitudeY;
+		
+		for (float i = 0.; i < 1.; i+=.1){	  	  
+			vec2 center0 = cp * i + cp2 * i;	  	  
+			vec2 center1 = cp * i * mainAmplitudeZ + cp2 * i * mainAmplitudeZ;	  	  
+			
+			float f = i * i * mainLight;	  	  
+			float d = distance(position, center0) * mainPower;	  	  
+			
+			color += cos(d)*f;	  	  
+			d = distance(position, center1) * mainIterations;	  	  
+			color += cos(d)*f;	  	  
+		}	  	  
+		
+		color.x = ((cos(color.x - time * mainStepX) + 1.0) / 2.0);
+		color.y = ((cos(color.y - time * mainStepY) + 1.0) / 2.0);
+		color.z = ((cos(color.z - time * mainStepZ) + 1.0) / 2.0);			
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		)	
+	]]>
+	</fragment_frag>
+</shader>

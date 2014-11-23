@@ -1,0 +1,11 @@
+attribute vec4 a_position;
+attribute vec2 a_texCoord0;
+uniform mat4 u_modelViewMatrix;
+uniform mat4 u_projectionMatrix;
+uniform mat4 u_projModelViewMatrix;
+varying vec2 v_tex0;
+
+void main() {
+	gl_Position = u_projectionMatrix * u_modelViewMatrix * a_position;
+	v_tex0 = a_texCoord0;
+}

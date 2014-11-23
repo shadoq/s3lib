@@ -1,0 +1,35 @@
+<shader>
+	<name>Blur Colours</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+		color += sin(position.x * (cos(time * mainSpeedX) * mainAmplitudeX)) + cos(position.y * (cos(time * mainSpeedY) * mainAmplitudeX));	  
+		color += sin(position.y * (sin(time * mainSpeedY) * mainAmplitudeY)) + cos(position.x * (sin(time * mainSpeedY) * mainAmplitudeY));	  
+		color *= (sin(time / mainSpeedZ) * mainAmplitudeZ) * (cos(time / mainIterations) * mainPower);
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		)	
+	]]>
+	</fragment_frag>
+</shader>

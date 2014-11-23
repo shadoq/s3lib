@@ -1,0 +1,36 @@
+<shader>
+	<name>Blur Stun</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+		float dist = distance(position*mainPower, resolution*mainLight)*mainIterations;
+		color.x = ((cos(dist*mainSpeedX - time*mainStepX) + 1.0) / (mainAmplitudeX*2.));
+		color.y = ((cos(dist*mainSpeedY - time*mainStepY) + 1.0) / (mainAmplitudeY*2.));
+		color.z = ((cos(dist*mainSpeedZ - time*mainStepZ) + 1.0) / (mainAmplitudeZ*2.));
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		)	
+	]]>
+	</fragment_frag>
+</shader>

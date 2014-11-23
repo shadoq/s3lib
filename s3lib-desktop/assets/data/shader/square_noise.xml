@@ -1,0 +1,65 @@
+<shader>
+	<name>Square noise</name>
+	<author>Shad - shad.net.pl</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		  float round(float v)	  
+		  {	  
+			if(v - floor(v) >= 0.5) return floor(v)+1.0;	  
+			else return floor(v);	  
+		  }	  
+			  
+		vec2 round(vec2 v)	  
+		{	  
+			vec2 ret = vec2(0.0);	  
+			if(v.x - floor(v.x) >= 0.5) ret.x = floor(v.x)+1.0;	  
+			else ret.x = floor(v.x);
+			if(v.y - floor(v.y) >= 0.5) ret.y = floor(v.y)+1.0;	  
+			else ret.y = floor(v.y);
+			return ret;	  
+		}	  
+			  
+		float triwave(float x)	  
+		{ 
+			return 1.0-4.0*abs(0.5-fract(0.5*x + 0.25));	  
+		}	  
+			  
+		float rand(vec2 co){	  
+			float t = round(time * mainIterations);	  
+			return fract(sin(dot(co.xy ,vec2(1.9898,7.233))) * t*t);	  
+		}	  	
+		
+		vec3 color = colourStart;
+		
+		
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+		vec2 rposition = round(position / mainPower * 5.0);	  
+		color += vec3(rand(rposition * mainAmplitudeX),rand(rposition * mainAmplitudeY),rand(rposition * mainAmplitudeZ));
+		color *= vec3(abs(sin((position.x * mainSpeedX))) * abs(sin((position.y * mainSpeedY))));	  
+		color *= vec3(clamp(abs(triwave(position.x/mainSpeedZ)) * 2.0 , 0.0 , 1.0 ));	  
+		color *= vec3(clamp(abs(triwave(position.y/mainSpeedZ)) * 2.0 , 0.0 , 1.0 ));
+	]]>	
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		)	
+	]]>
+	</fragment_frag>
+</shader>

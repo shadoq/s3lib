@@ -1,0 +1,77 @@
+<shader>
+	<name>Lights</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		vec2 uv = position;
+		uv.x -= 0.5;	  
+		uv.y -= 0.5;	  
+		
+		vec2 move1;	  
+		move1.x = cos(time * mainSpeedX) * mainAmplitudeX;	  
+		move1.y = sin(time * 1.5 * mainSpeedX) * 0.6*mainAmplitudeX;	  
+		
+		vec2 move2;	  
+		move2.x = cos(time * mainSpeedY) * mainAmplitudeY;	  
+		move2.y = sin(time * 2. * mainSpeedY) * 0.6 * mainAmplitudeY;
+		
+		vec2 move3;	  
+		move3.x = sin(time * mainSpeedZ)* cos(time * mainSpeedZ) * mainAmplitudeZ;	  
+		move3.y = cos(time * 0.5 * mainSpeedZ) * sin(time * 0.5 * mainSpeedZ) * mainAmplitudeZ;	  
+				  
+		vec2 p = position;	 
+		
+		p.x *= 2.0;	  
+		
+		float r1 =(dot(p - move1, p - move1)) * 8.0;	  
+		float r2 =(dot(p + move2, p + move2)) * 6.0;	  
+		float r3 =(dot(p + move3, p + move3)) * 3.0;	  
+				  
+		float metaball = (0.4/r1 + 0.4/r2 + 0.4/r3);	  
+		float col2 =0.4;
+		//float metaball =(0.2/colr+0.2/colb+0.2/colg);	  
+		//alter the cut-off power	  
+		col2 = 0.07 / col2;	  
+		
+		float colr=col2*0.5;	  
+		float colg=col2*0.5;	  
+		float colb=col2*0.5;	  
+
+		colr= col2 + r1 * mainPower;	  
+		colg= col2 + r2 * mainPower;	  
+		colb= col2 + r3 * mainPower;
+		
+		colr = mainIterations / colr+metaball * 0.1;	  
+		colb = mainIterations / colb+metaball * 0.1;	  
+		colg = mainIterations / colg+metaball * 0.1;	  
+					  
+		color += (vec3(colr,colg,colb) * mainLight);
+		
+	]]>	
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		)	
+	]]>
+	</fragment_frag>
+</shader>

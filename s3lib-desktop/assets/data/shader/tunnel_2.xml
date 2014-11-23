@@ -1,0 +1,53 @@
+<shader>
+	<name>Tunel 2</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		float a = atan( position.y, position.x );
+		float r = sqrt( dot( position, position ) );
+
+		vec2 uv = vec2( 0.0, 0.0 );
+		uv.x = mod( cos(a * mainStepX) / r + time * 0.05 * mainSpeedX, mainAmplitudeX );
+		uv.y = mod( sin(a * mainStepY) / r + time * 0.06 * mainSpeedY, mainAmplitudeY );
+	
+		float amount = sin( time * 0.5 * mainSpeedZ) * 0.01 * mainAmplitudeZ;
+
+		vec4 color0 = texture2D( u_diffuseTexture, uv );
+		vec4 color1 = texture2D( u_diffuseTexture, uv + vec2( 0.0, - amount ) );
+		vec4 color2 = texture2D( u_diffuseTexture, uv + vec2( 0.0, amount ) );
+		vec4 color3 = texture2D( u_diffuseTexture, uv + vec2( amount, 0.0 ) );
+		vec4 color4 = texture2D( u_diffuseTexture, uv + vec2( - amount, 0.0 ) );
+
+		vec4 nxColor = ( ( color0 + color1 + color2 + color3 + color4 ) / 8.0 ) + pow( 1.0 - r, 3.0 * mainStepZ );
+		
+		color += vec3(nxColor.x, nxColor.y, nxColor.z);
+		
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+	
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) 
+	]]>
+	</fragment_frag>
+</shader>

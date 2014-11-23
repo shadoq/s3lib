@@ -1,0 +1,122 @@
+<shader>
+	<name>Empty</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+	
+		// v_tex0
+		// u_sampler0
+		
+		// position
+	
+		// time
+		// resolution
+
+		// colourStart
+		// colourProcess
+		// amplitudeColourR
+		// amplitudeColourG
+		// amplitudeColourB
+
+		// speedFlashR
+		// speedFlashG
+		// speedFlashB
+
+		// amplitudeFlashR
+		// amplitudeFlashG
+		// amplitudeFlashB
+
+		// mainSpeedX
+		// mainSpeedY
+		// mainSpeedZ
+
+		// mainAmplitudeX
+		// mainAmplitudeY
+		// mainAmplitudeZ
+
+		// mainStepX
+		// mainStepY
+		// mainStepZ
+
+		// mainIterations
+		// mainPower
+		// mainLight
+
+		uniform sampler2D backbuffer;
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		const float pi = 3.141592;
+		float angle = 0.0;
+		float radius = 0.0;
+		float fade = 0.0;
+		float gradient = 0.0;
+		float dist_from_center = length(position);
+		float angle_from_center = atan(position.y, position.x);		
+	 
+		float u=0.0;
+		float v=0.0;
+		float z=0.0;
+		
+		//
+		// Mandebrot
+		//
+		// float xpos = -0.5 + sin(position.y * 16.0 + time) * 0.06;
+		// float ypos = 0.0 + sin(position.x * 24.0 + 1.5 * time) * 0.04;
+		float z_fractal = mainPower * 2;
+	
+		float iter2 = mainIterations / mainSpeedX;
+		
+		float z0_r = mainAmplitudeX * 0.1;
+		float z0_i = mainAmplitudeY * 0.1;
+		float z1_r = 0.0;
+		float z1_i = 0.0;
+		// float p_r = (position.x + xpos * z_fractal) / z_fractal;
+		// float p_i = (position.y + ypos * z_fractal) / z_fractal;
+		float p_r = position.x / z_fractal * mainSpeedY;
+		float p_i = position.y / z_fractal * mainSpeedZ;
+		float d = 0.0;
+		
+		float nn;
+		for (float n=0.0; n <= mainIterations; n++)
+		{
+			z1_r = z0_r * z0_r - z0_i * z0_i + p_r;
+			z1_i = mainAmplitudeZ * z0_r * z0_i + p_i;
+			d = sqrt(z1_i * z1_i + z1_r * z1_r);
+			z0_r = z1_r;
+			z0_i = z1_i;
+			if (d > iter2){
+				break;
+			}
+			nn = n;
+		}
+		
+		gradient = (nn / mainIterations) * 16.0 * mainLight;	
+		color = vec3(gradient);	
+
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+	
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) 
+	]]>
+	</fragment_frag>
+</shader>

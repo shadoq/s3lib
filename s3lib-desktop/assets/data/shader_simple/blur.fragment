@@ -1,0 +1,46 @@
+#ifdef GL_ES
+	#define LOWP lowp
+	precision mediump float;
+#else
+	#define LOWP
+#endif
+varying LOWP vec4 v_color;
+varying vec2 v_texCoords;
+uniform sampler2D u_texture;
+
+uniform float blurSizeX;
+uniform float blurSizeY;
+uniform float blurStrength;
+
+void main()
+{
+	vec4 blurColour=vec4(0.0);
+   
+	//
+	// Blur horizontal
+	//
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x - 4.0 * blurSizeX, v_texCoords.y)) * 0.02 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x - 3.0 * blurSizeX, v_texCoords.y)) * 0.04 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x - 2.0 * blurSizeX, v_texCoords.y)) * 0.06 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x - blurSizeX, v_texCoords.y)) * 0.8 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y)) * 0.10 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x + blurSizeX, v_texCoords.y)) * 0.08 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x + 2.0 * blurSizeX, v_texCoords.y)) * 0.06 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x + 3.0 * blurSizeX, v_texCoords.y)) * 0.04 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x + 4.0 * blurSizeX, v_texCoords.y)) * 0.02 * blurStrength;
+	   
+	//
+	// Blur vertical
+	//
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y - 4.0 * blurSizeY)) * 0.02 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y - 3.0 * blurSizeY)) * 0.04 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y - 2.0 * blurSizeY)) * 0.06 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y - blurSizeY)) * 0.08 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y)) * 0.10 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y + blurSizeY)) * 0.08 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y + 2.0 * blurSizeY)) * 0.06 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y + 3.0 * blurSizeY)) * 0.04 * blurStrength;
+	blurColour += texture2D(u_texture, vec2(v_texCoords.x, v_texCoords.y + 4.0 * blurSizeY)) * 0.02 * blurStrength;
+	
+	gl_FragColor = blurColour;
+}

@@ -1,0 +1,131 @@
+<shader>
+	<name>Empty</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+	
+		// v_tex0
+		// u_sampler0
+		
+		// position
+	
+		// time
+		// resolution
+
+		// colourStart
+		// colourProcess
+		// amplitudeColourR
+		// amplitudeColourG
+		// amplitudeColourB
+
+		// speedFlashR
+		// speedFlashG
+		// speedFlashB
+
+		// amplitudeFlashR
+		// amplitudeFlashG
+		// amplitudeFlashB
+
+		// mainSpeedX
+		// mainSpeedY
+		// mainSpeedZ
+
+		// mainAmplitudeX
+		// mainAmplitudeY
+		// mainAmplitudeZ
+
+		// mainStepX
+		// mainStepY
+		// mainStepZ
+
+		// mainIterations
+		// mainPower
+		// mainLight
+
+		uniform sampler2D backbuffer;
+		vec3 color = colourStart;
+		
+		float rand(vec2 vector)
+		{
+			return fract( 43758.5453 * sin( dot(vector, vec2(12.9898, 78.233) ) ) );
+		}
+		
+		float get_bump_height(vec2 position)
+		{
+			return sin((sin(position.x * 32.0) + sin(position.y * 24.0) + sin(position.x * 4.0 + sin(position.y * 8.0 + time))) * 4.0) * 0.5 + 0.5;
+		}
+
+		float get_light(vec2 position)
+		{
+			vec2 tex = mod(position * 4.0, 1.0) - vec2(0.5);
+			return 0.0005 / pow(length(tex), 4.0);
+		}
+
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+		
+		const float pi = 3.141592;
+		float angle = 0.0;
+		float radius = 0.0;
+		float fade = 0.0;
+		float gradient = 0.0;
+		float dist_from_center = length(position);
+		float angle_from_center = atan(position.y, position.x);		
+	 
+		float u=0.0;
+		float v=0.0;
+		float z=0.0;
+		
+		//
+		// Animate mandelbrot
+		//
+		float zom = mainSpeedZ;
+		float x0 = position.x * zom;
+		float y0 = position.y * zom;
+	
+		float x1, y1, mj2;
+	
+		float posx = sin(time * mainSpeedX) * 0.25 * mainAmplitudeX;
+		float posy = sin(time * mainSpeedY) * 0.25 * mainAmplitudeY;
+	
+		float nn;
+		for (float n=0.0; n <= mainIterations; n++)
+		{
+			x1 = x0*x0 - y0*y0 + posx;
+			y1 = 2.0*x0*y0 + posy;
+			mj2 = x1*x1 + y1*y1;
+			x0 = x1; 
+			y0 = y1;
+			nn = n;
+			if (mj2 > mainIterations) break;
+		}
+	
+		gradient = (nn / mainIterations) * 8.0 * mainLight;
+	
+		color = vec3(gradient);		
+
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+	
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) 
+	]]>
+	</fragment_frag>
+</shader>

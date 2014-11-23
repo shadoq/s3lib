@@ -1,0 +1,58 @@
+<shader>
+	<name>Polar Gradient</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+		
+		float PI = 3.14159265358979323846264;
+		float TwoPI = PI * 2.0;
+
+		vec2 GetPolar(vec2 pos, vec2 position)
+		{
+			vec2 origo=vec2(0.5, 0.5);
+			vec2 relPos=position - pos;
+			float rad=length(relPos);
+			float ang=atan(relPos.x, relPos.y) / TwoPI + 0.5;
+			return vec2(ang, rad);
+		}
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+	
+		vec2 pos0=vec2(0.0, 0.0);
+		vec2 pos1=vec2(0.0, 0.0);
+		
+		vec2 polCoord0=GetPolar(pos0, position);
+		vec2 polCoord1=GetPolar(pos1, position);
+
+		float ang= polCoord0.x + polCoord1.x;
+		float rad= polCoord0.y + polCoord1.y;
+		rad=rad + (sin(rad * mainSpeedX + time * mainStepX)* mainAmplitudeX) * (sin(rad * mainSpeedY + time * mainStepY) * mainAmplitudeY);
+		float c=sin((rad + ang * mainSpeedZ) * PI * mainStepZ * 4.0) * mainPower + 0.5;
+
+		color += vec3(c,c,c);	
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+	
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) 
+	]]>
+	</fragment_frag>
+</shader>

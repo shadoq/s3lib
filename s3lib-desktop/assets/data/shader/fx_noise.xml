@@ -1,0 +1,108 @@
+<shader>
+	<name>Empty</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+	
+		// v_tex0
+		// u_sampler0
+		
+		// position
+	
+		// time
+		// resolution
+
+		// colourStart
+		// colourProcess
+		// amplitudeColourR
+		// amplitudeColourG
+		// amplitudeColourB
+
+		// speedFlashR
+		// speedFlashG
+		// speedFlashB
+
+		// amplitudeFlashR
+		// amplitudeFlashG
+		// amplitudeFlashB
+
+		// mainSpeedX
+		// mainSpeedY
+		// mainSpeedZ
+
+		// mainAmplitudeX
+		// mainAmplitudeY
+		// mainAmplitudeZ
+
+		// mainStepX
+		// mainStepY
+		// mainStepZ
+
+		// mainIterations
+		// mainPower
+		// mainLight
+
+		float rand(vec2 vector)
+		{
+			return fract( 43758.5453 * sin( dot(vector, vec2(12.9898, 78.233) ) ) );
+		}
+		
+		float get_bump_height(vec2 position)
+		{
+			return sin((sin(position.x * 32.0) + sin(position.y * 24.0) + sin(position.x * 4.0 + sin(position.y * 8.0 + time))) * 4.0) * 0.5 + 0.5;
+		}
+
+		float get_light(vec2 position)
+		{
+			vec2 tex = mod(position * 4.0, 1.0) - vec2(0.5);
+			return 0.0005 / pow(length(tex), 4.0);
+		}
+
+		uniform sampler2D backbuffer;
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+
+		const float pi = 3.141592;
+		float angle = 0.0;
+		float radius = 0.0;
+		float fade = 0.0;
+		float gradient = 0.0;
+		vec2 coord = mod(position,1.0);	
+		vec2 centered_coord = coord - vec2(0.5);
+		float dist_from_center = length(centered_coord);
+		float angle_from_center = atan(centered_coord.y, centered_coord.x);		
+	 
+		float u,v;
+		float z;
+
+		//
+		// Noise
+		//
+		gradient = (rand(vec2(coord)*time*mainSpeedX));
+		color = vec3(gradient);	
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+	
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		) 
+	]]>
+	</fragment_frag>
+</shader>

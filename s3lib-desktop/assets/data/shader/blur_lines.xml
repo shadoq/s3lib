@@ -1,0 +1,36 @@
+<shader>
+	<name>Blur Lines</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+		color += sqrt((position.x) * (position.x) + (position.y) * (position.y)) * sin(time / mainPower) * cos(time / mainPower) * (mainLight * 20.0);
+		color += sin(time * mainSpeedX) * mainAmplitudeX;
+		color += cos(time * mainSpeedY) * mainAmplitudeY;
+		color += sin(cos((time / mainSpeedZ + position.x + position.y) * mainIterations)) * mainAmplitudeZ;
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		)	
+	]]>
+	</fragment_frag>
+</shader>

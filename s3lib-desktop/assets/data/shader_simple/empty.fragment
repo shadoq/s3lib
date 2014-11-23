@@ -1,0 +1,36 @@
+#ifdef GL_ES
+	precision lowp float;
+#endif
+
+ varying vec2 v_tex0;
+ uniform sampler2D u_sampler0;
+ uniform float time;			  
+ uniform vec2  resolution;		  
+ uniform vec3  colourStart;		  
+ uniform vec3  colourProcess;	  
+ uniform float amplitudeColourR;  
+ uniform float amplitudeColourG;  
+ uniform float amplitudeColourB;  
+ uniform float speedFlashR;
+ uniform float speedFlashG;
+ uniform float speedFlashB;
+ uniform float amplitudeFlashR;
+ uniform float amplitudeFlashG;
+ uniform float amplitudeFlashB;
+ uniform float mainSpeedX;
+ uniform float mainSpeedY;
+uniform float mainSpeedZ;
+ uniform float mainAmplitudeX;
+ uniform float mainAmplitudeY;
+ uniform float mainAmplitudeZ;
+ uniform float mainStepX;
+ uniform float mainStepY;
+ uniform float mainStepZ;
+ uniform float mainIterations;
+ uniform float mainPower;
+ uniform float mainLight;
+ 
+void main() {
+	vec2 position = -1.0 + 2.0*v_tex0.xy;
+	gl_FragColor = vec4(1, 1, 1, 1) *  texture2D(u_sampler0,  v_tex0);
+}

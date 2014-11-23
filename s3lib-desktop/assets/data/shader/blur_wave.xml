@@ -1,0 +1,38 @@
+<shader>
+	<name>Blur Wave</name>
+	<author>shad</author>
+	<info></info>
+	<vertex_init>
+	<![CDATA[
+	]]>
+	</vertex_init>
+	<vertex_main>
+	<![CDATA[
+	]]>
+	</vertex_main>
+	<fragment_init>
+	<![CDATA[
+		vec3 color = colourStart;
+	]]>
+	</fragment_init>
+	<fragment_main>
+	<![CDATA[
+		vec2 pixel=vec2(sin(position.x * time * mainPower) * mainIterations, cos(position.y * time * mainLight) * mainIterations);
+		float dist = distance(position, pixel);
+		
+		color.x = ((cos(dist*mainSpeedX - time*mainStepX) + 1.0) / 2.0);
+		color.y = ((cos(dist*mainSpeedY - time*mainStepY) + 1.0) / 2.0);
+		color.z = ((cos(dist*mainSpeedZ - time*mainStepZ) + 1.0) / 2.0);
+	]]>
+	</fragment_main>
+	<fragment_frag>
+	<![CDATA[
+		vec4(
+			((color.x * amplitudeColourR) + (sin(time * speedFlashR) * amplitudeFlashR)) * colourProcess.x, 
+			((color.y * amplitudeColourG) + (sin(time * speedFlashG) * amplitudeFlashG)) * colourProcess.y, 
+			((color.z * amplitudeColourB) + (sin(time * speedFlashB) * amplitudeFlashB)) * colourProcess.z, 
+			1.0 
+		)	
+	]]>
+	</fragment_frag>
+</shader>
