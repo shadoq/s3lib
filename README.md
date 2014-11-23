@@ -1,0 +1,3 @@
+s3lib
+=====
+Extended library for libGdx ...
