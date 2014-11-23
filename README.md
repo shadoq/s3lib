@@ -6,7 +6,6 @@ ToDo:
 * Adding more comments to the code
 * Clean and rewrite some code fragment 
 * Documentation
-* 
 
 s3lib-core
 -----
